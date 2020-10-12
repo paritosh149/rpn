@@ -1,30 +1,23 @@
-package com.example;
+package com.example.calculator;
 
-import org.junit.Test;
+import com.example.calculator.interfaces.ICalculator;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 /**
  * Unit test for simple App.
  */
 public class MainTest
 {
-    CalculatorMain calculator = new CalculatorMain();
+    ICalculator calculator = new CalculatorImpl();
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-
-
-    @Test
-    public void shouldAnswerWithTrue()
-    {
-        assertTrue( true );
-    }
     @BeforeAll
     static void setup(){
 

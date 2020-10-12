@@ -1,10 +1,10 @@
-package com.example;
+package com.example.calculator.objects;
 
 import java.math.BigDecimal;
 
-public class InputData {
+public class ManagedInput {
     // TODO Getter and Setter
-    public InputDataType type;
+    public ManagedInputType type;
     public OperatorType operator;
     public CommandType command;
     public BigDecimal value;

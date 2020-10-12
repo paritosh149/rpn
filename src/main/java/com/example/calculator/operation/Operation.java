@@ -1,4 +1,7 @@
-package com.example;
+package com.example.calculator.operation;
+
+import com.example.calculator.objects.ManagedInput;
+import com.example.calculator.objects.TreeNode;
 
 import javax.naming.InsufficientResourcesException;
 import java.math.BigDecimal;
@@ -8,29 +11,29 @@ import java.util.Stack;
 
 public class Operation {
 
-    public static void processOperation(InputData inputData, Stack<TreeNode<BigDecimal>> calcHeap, MathContext mathContext) throws InsufficientResourcesException {
-        switch (inputData.operator) {
+    public static void processOperation(ManagedInput managedInput, Stack<TreeNode<BigDecimal>> calcHeap, MathContext mathContext) throws InsufficientResourcesException {
+        switch (managedInput.operator) {
             case PLUS:
-                operateOnTwo(inputData, calcHeap, mathContext, SimpleOperation::add);
+                operateOnTwo(managedInput, calcHeap, mathContext, SimpleOperation::add);
                 break;
             case MINUS:
-                operateOnTwo(inputData, calcHeap, mathContext, SimpleOperation::subtract);
+                operateOnTwo(managedInput, calcHeap, mathContext, SimpleOperation::subtract);
                 break;
             case MULTIPLY:
-                operateOnTwo(inputData, calcHeap, mathContext, SimpleOperation::multiply);
+                operateOnTwo(managedInput, calcHeap, mathContext, SimpleOperation::multiply);
                 break;
             case DIVIDE:
-                operateOnTwo(inputData, calcHeap, mathContext, SimpleOperation::divide);
+                operateOnTwo(managedInput, calcHeap, mathContext, SimpleOperation::divide);
                 break;
             case SQRT:
-                operateOnOne(inputData, calcHeap, mathContext, SimpleOperation::sqrt);
+                operateOnOne(managedInput, calcHeap, mathContext, SimpleOperation::sqrt);
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + inputData.operator);
+                throw new IllegalStateException("Unexpected value: " + managedInput.operator);
         }
     }
 
-    private static void operateOnTwo(InputData inputData, Stack<TreeNode<BigDecimal>> calcHeap, MathContext mathContext, OperationOnTwo operationOnTwo) throws InsufficientResourcesException {
+    private static void operateOnTwo(ManagedInput managedInput, Stack<TreeNode<BigDecimal>> calcHeap, MathContext mathContext, OperationOnTwo operationOnTwo) throws InsufficientResourcesException {
         TreeNode<BigDecimal> lastOperand = null;
         TreeNode<BigDecimal> secondLastOperand = null;
         try {
@@ -56,11 +59,11 @@ public class Operation {
             combinedNode.childNodes.push(lastOperand);
             calcHeap.push(combinedNode);
         } catch (EmptyStackException e) {
-            throw new InsufficientResourcesException(inputData.operator.toString());
+            throw new InsufficientResourcesException(managedInput.operator.toString());
         }
     }
 
-    private static void operateOnOne(InputData inputData, Stack<TreeNode<BigDecimal>> calcHeap, MathContext mathContext, OperationOnOne operationOnOne) throws InsufficientResourcesException {
+    private static void operateOnOne(ManagedInput managedInput, Stack<TreeNode<BigDecimal>> calcHeap, MathContext mathContext, OperationOnOne operationOnOne) throws InsufficientResourcesException {
         TreeNode<BigDecimal> lastOperand1 = null;
         try {
             lastOperand1 = calcHeap.pop();
@@ -70,7 +73,7 @@ public class Operation {
             combinedResult1.childNodes.push(lastOperand1);
             calcHeap.push(combinedResult1);
         } catch (EmptyStackException e) {
-            throw new InsufficientResourcesException(inputData.operator.toString());
+            throw new InsufficientResourcesException(managedInput.operator.toString());
         } catch (ArithmeticException e) {
             if (lastOperand1 != null)
                 calcHeap.push(lastOperand1);

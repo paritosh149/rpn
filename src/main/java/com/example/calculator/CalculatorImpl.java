@@ -1,8 +1,12 @@
-package com.example;
+package com.example.calculator;
 
-import com.example.exception.CalcException;
-import com.example.exception.ExitException;
-import com.example.exception.InvalidInputException;
+import com.example.calculator.command.Command;
+import com.example.calculator.exception.ExitException;
+import com.example.calculator.interfaces.ICalculator;
+import com.example.calculator.objects.*;
+import com.example.calculator.exception.CalcException;
+import com.example.calculator.exception.InvalidInputException;
+import com.example.calculator.operation.Operation;
 
 import javax.naming.InsufficientResourcesException;
 import java.io.*;
@@ -15,7 +19,7 @@ import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringJoiner;
 
-public class CalculatorMain {
+public class CalculatorImpl implements ICalculator {
 
     String displaySeparatorChar;
     String inputSeparatorChar;
@@ -29,10 +33,10 @@ public class CalculatorMain {
     HashMap<String, OperatorType> OperatorsMap = new HashMap<>();
     HashMap<String, CommandType> CommandsMap = new HashMap<>();
 
-    public CalculatorMain() {
+    public CalculatorImpl() {
         this(" ", " ", 15, 10);
     }
-    public CalculatorMain(String displaySeparatorChar,
+    public CalculatorImpl(String displaySeparatorChar,
                           String inputSeparatorChar,
                           int operationPrecision,
                           int displayPrecision) {
@@ -58,20 +62,22 @@ public class CalculatorMain {
         boolean isRunning = true;
         // keep accepting input lines until exit command is issued
         while (isRunning && scanner.hasNextLine()) {
-            // accept user inputs in a single line
-            String inputLine = scanner.nextLine();
             try {
-                this.processInputLine(inputLine);
-                // print the calc stack
+                // accept user inputs in a single line
+                String inputLine = scanner.nextLine();
+                try {
+                    this.processInputLine(inputLine);
+                }catch (CalcException e) {
+                    writer.write(e.getMessage());
+                } finally {
+                    // print the calc stack
+                    writer.write("stack: " + this);
+                    writer.write("\n");
+                    writer.flush();
+                }
             } catch (ExitException e) {
                 // stop accepting the input line
                 isRunning = false;
-            }catch (CalcException e) {
-                writer.write(e.getMessage());
-            } finally {
-                writer.write("stack: " + this);
-                writer.write("\n");
-                writer.flush();
             }
         }
     }
@@ -97,32 +103,32 @@ public class CalculatorMain {
     }
 
     private void processInputPart(String inputPart) throws ExitException, InvalidInputException, InsufficientResourcesException {
-        InputData inputData = this.prepareInputPart(inputPart);
-        switch (inputData.type) {
+        ManagedInput managedInput = this.prepareInputPart(inputPart);
+        switch (managedInput.type) {
             case INVALID:
                 throw new InvalidInputException(inputPart);
             case COMMAND:
-                processCommand(inputData);
+                processCommand(managedInput);
                 return;
             case NUMBER:
-                processNumber(inputData);
+                processNumber(managedInput);
                 break;
             case OPERATION:
-                processOperation(inputData);
+                processOperation(managedInput);
                 break;
         }
     }
 
-    private void processOperation(InputData inputData) throws InsufficientResourcesException {
-        Operation.processOperation(inputData, calcStorage, mathContext);
+    private void processOperation(ManagedInput managedInput) throws InsufficientResourcesException {
+        Operation.processOperation(managedInput, calcStorage, mathContext);
     }
 
-    private void processNumber(InputData inputData) {
-        calcStorage.push(new TreeNode<>(inputData.value));
+    private void processNumber(ManagedInput managedInput) {
+        calcStorage.push(new TreeNode<>(managedInput.value));
     }
 
-    private void processCommand(InputData inputData) throws ExitException {
-        switch (inputData.command) {
+    private void processCommand(ManagedInput managedInput) throws ExitException {
+        switch (managedInput.command) {
             case EXIT:
                 command.exit();
             case UNDO:
@@ -134,31 +140,31 @@ public class CalculatorMain {
         }
     }
 
-    private InputData prepareInputPart(String inputPart) {
-        InputData inputData = new InputData();
+    private ManagedInput prepareInputPart(String inputPart) {
+        ManagedInput managedInput = new ManagedInput();
         // check if it is a operator
-        inputData.operator = OperatorsMap.get(inputPart);
-        if (inputData.operator != null) {
-            inputData.type = InputDataType.OPERATION;
-            return inputData;
+        managedInput.operator = OperatorsMap.get(inputPart);
+        if (managedInput.operator != null) {
+            managedInput.type = ManagedInputType.OPERATION;
+            return managedInput;
         }
         // check is it is a command
-        inputData.command = CommandsMap.get(inputPart);
-        if (inputData.command != null) {
-            inputData.type = InputDataType.COMMAND;
-            return inputData;
+        managedInput.command = CommandsMap.get(inputPart);
+        if (managedInput.command != null) {
+            managedInput.type = ManagedInputType.COMMAND;
+            return managedInput;
         }
         // check if it is a number
         try {
-            inputData.value = new BigDecimal(inputPart);
-            inputData.type = InputDataType.NUMBER;
-            return inputData;
+            managedInput.value = new BigDecimal(inputPart);
+            managedInput.type = ManagedInputType.NUMBER;
+            return managedInput;
         } catch (NumberFormatException e) {
             // Do nothing
         }
         // input part is not understood yet
-        inputData.type = InputDataType.INVALID;
-        return inputData;
+        managedInput.type = ManagedInputType.INVALID;
+        return managedInput;
     }
 
     @Override

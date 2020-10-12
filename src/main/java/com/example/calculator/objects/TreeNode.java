@@ -1,10 +1,10 @@
-package com.example;
+package com.example.calculator.objects;
 
 import java.util.Stack;
 
 public class TreeNode<T> {
-    T value;
-    Stack<TreeNode<T>> childNodes;
+    public T value;
+    public Stack<TreeNode<T>> childNodes;
 
     public TreeNode(T value) {
         this.value = value;

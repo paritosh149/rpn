@@ -1,6 +1,4 @@
-package com.example.exception;
-
-import com.example.CalculatorMain;
+package com.example.calculator.exception;
 
 public class CalcException extends RuntimeException{
     public CalcException(String message) {

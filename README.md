@@ -4,4 +4,4 @@
 - [x] Full Code Covered
 - [x] Convert to Maven project
 - [x] Test JAR independently
-- [ ] Add to Git
+- [x] Add Readme.md
