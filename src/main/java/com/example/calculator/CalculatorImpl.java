@@ -81,7 +81,7 @@ public class CalculatorImpl implements ICalculator {
         while (isRunning && scanner.hasNextLine()) {
             try {
                 // accept user inputs in a single line
-                String inputLine = scanner.nextLine().toLowerCase();
+                String inputLine = scanner.nextLine().toLowerCase().trim();
                 try {
                     this.processInputLine(inputLine);
                 }catch (CalcException e) {
