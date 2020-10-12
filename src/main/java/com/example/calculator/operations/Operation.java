@@ -1,4 +1,4 @@
-package com.example.calculator.operation;
+package com.example.calculator.operations;
 
 import com.example.calculator.objects.ManagedInput;
 import com.example.calculator.objects.TreeNode;

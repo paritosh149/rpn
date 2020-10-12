@@ -1,4 +1,4 @@
-package com.example.calculator.exception;
+package com.example.calculator.exceptions;
 
 public class ExitException extends Throwable {
 }

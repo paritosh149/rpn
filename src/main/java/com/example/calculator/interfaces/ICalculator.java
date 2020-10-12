@@ -6,4 +6,6 @@ import java.io.OutputStream;
 
 public interface ICalculator {
     void run(InputStream is, OutputStream os) throws IOException;
+
+    void run() throws IOException;
 }

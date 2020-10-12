@@ -1,12 +1,13 @@
 package com.example.calculator;
 
-import com.example.calculator.command.Command;
-import com.example.calculator.exception.ExitException;
+import com.example.calculator.commands.Command;
+import com.example.calculator.constants.Constants;
+import com.example.calculator.exceptions.ExitException;
 import com.example.calculator.interfaces.ICalculator;
 import com.example.calculator.objects.*;
-import com.example.calculator.exception.CalcException;
-import com.example.calculator.exception.InvalidInputException;
-import com.example.calculator.operation.Operation;
+import com.example.calculator.exceptions.CalcException;
+import com.example.calculator.exceptions.InvalidInputException;
+import com.example.calculator.operations.Operation;
 
 import javax.naming.InsufficientResourcesException;
 import java.io.*;
@@ -21,58 +22,73 @@ import java.util.StringJoiner;
 
 public class CalculatorImpl implements ICalculator {
 
-    String displaySeparatorChar;
-    String inputSeparatorChar;
-    int operationPrecision;
-    int displayPrecision;
-    public MathContext mathContext;
+    final String displaySeparatorChar;
+    final String inputSeparatorChar;
+    final int operationPrecision;
+    final int displayPrecision;
+    final public MathContext mathContext;
 
-    final Command<BigDecimal> command = new Command<>();
+    final Command<BigDecimal> command;
 
-    Stack<TreeNode<BigDecimal>> calcStorage = new Stack<>();
-    HashMap<String, OperatorType> OperatorsMap = new HashMap<>();
-    HashMap<String, CommandType> CommandsMap = new HashMap<>();
+    final Stack<TreeNode<BigDecimal>> calcStorage;
+    final HashMap<String, OperatorType> OperatorsMap;
+    final HashMap<String, CommandType> CommandsMap;
 
     public CalculatorImpl() {
-        this(" ", " ", 15, 10);
+        this(Constants.DISPLAY_SEPARATOR_CHAR,
+                Constants.INPUT_SEPARATOR_CHAR,
+                Constants.OPERATION_PRECISION,
+                Constants.DISPLAY_PRECISION);
     }
     public CalculatorImpl(String displaySeparatorChar,
                           String inputSeparatorChar,
                           int operationPrecision,
                           int displayPrecision) {
+
         this.displaySeparatorChar = displaySeparatorChar;
         this.inputSeparatorChar = inputSeparatorChar;
         this.operationPrecision = operationPrecision;
         this.displayPrecision = displayPrecision;
         this.mathContext = new MathContext(operationPrecision, RoundingMode.HALF_UP);
-        OperatorsMap.put("+", OperatorType.PLUS);
-        OperatorsMap.put("-", OperatorType.MINUS);
-        OperatorsMap.put("*", OperatorType.MULTIPLY);
-        OperatorsMap.put("/", OperatorType.DIVIDE);
-        OperatorsMap.put("sqrt", OperatorType.SQRT);
 
-        CommandsMap.put("exit", CommandType.EXIT);
-        CommandsMap.put("undo", CommandType.UNDO);
-        CommandsMap.put("clear", CommandType.CLEAR);
+        command = new Command<>();
+
+        calcStorage = new Stack<>();
+        OperatorsMap = new HashMap<>();
+        CommandsMap = new HashMap<>();
+
+        OperatorsMap.put(OperatorType.PLUS.toString(), OperatorType.PLUS);
+        OperatorsMap.put(OperatorType.MINUS.toString(), OperatorType.MINUS);
+        OperatorsMap.put(OperatorType.MULTIPLY.toString(), OperatorType.MULTIPLY);
+        OperatorsMap.put(OperatorType.DIVIDE.toString(), OperatorType.DIVIDE);
+        OperatorsMap.put(OperatorType.SQRT.toString(), OperatorType.SQRT);
+
+        CommandsMap.put(CommandType.EXIT.toString(), CommandType.EXIT);
+        CommandsMap.put(CommandType.UNDO.toString(), CommandType.UNDO);
+        CommandsMap.put(CommandType.CLEAR.toString(), CommandType.CLEAR);
+
+    }
+
+    public void run() throws IOException {
+        this.run(System.in, System.out);
     }
 
     public void run(InputStream inputStream, OutputStream outputStream) throws IOException {
-        Scanner scanner = new Scanner(inputStream);
-        Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+        final Scanner scanner = new Scanner(inputStream);
+        final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
         boolean isRunning = true;
         // keep accepting input lines until exit command is issued
         while (isRunning && scanner.hasNextLine()) {
             try {
                 // accept user inputs in a single line
-                String inputLine = scanner.nextLine();
+                String inputLine = scanner.nextLine().toLowerCase();
                 try {
                     this.processInputLine(inputLine);
                 }catch (CalcException e) {
                     writer.write(e.getMessage());
                 } finally {
                     // print the calc stack
-                    writer.write("stack: " + this);
-                    writer.write("\n");
+                    writer.write("stack: " + this + "\n");
                     writer.flush();
                 }
             } catch (ExitException e) {
@@ -169,11 +185,10 @@ public class CalculatorImpl implements ICalculator {
 
     @Override
     public String toString() {
-        StringJoiner sj = new StringJoiner(displaySeparatorChar);
+        final StringJoiner sj = new StringJoiner(displaySeparatorChar);
         for (TreeNode<BigDecimal> item : calcStorage) {
             sj.add(
                 item.value
-                    // TODO store the rounded value for future
                     .setScale(displayPrecision, RoundingMode.FLOOR)
                     .stripTrailingZeros()
                     .toPlainString()

@@ -1,4 +1,4 @@
-package com.example.calculator.exception;
+package com.example.calculator.exceptions;
 
 public class CalcException extends RuntimeException{
     public CalcException(String message) {
