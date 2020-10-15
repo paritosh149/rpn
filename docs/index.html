@@ -7,9 +7,14 @@
 </head>
 <body>
 <h2>RPN Calculator</h2><br />
+<h3>Available functions are +, - , * /</h3>
+<h3>Available commands are undo, clear</h3>
+<h3>Example: 12 3 + would result 15</h3>
 <h4>Enter: <input name="inputLine" /></h4><br />
 <button onClick="calculate()" >Calculate</button><br />
-<h4>Result: </h4><h5 id="result"></h5>
+<h4>Result: <strong id="result"></strong></h4>
+<h5>Console:</h5>
+<div name="console" id="console" ></div>
 
 </body>
 <script>
@@ -24,7 +29,8 @@
     //cheerpjCreateDisplay(800,600);
 	// py "d:\cheerpj_2.1\cheerpjfy.py" "rpn-1.0-SNAPSHOT.jar"
 	// py -m http.server 8081
-    cheerpjRunMain("com.example.calculator.MainWasm","/app/rpn/rpn-1.0-SNAPSHOT.jar");
+	
+    cheerpjRunMain("com.example.calculator.MainWasm","/app/"+window.location.pathname+"rpn-1.0-SNAPSHOT.jar");
 	var calculator = cjNew("com.example.calculator.CalculatorImpl")
 	var result="";
 	function calculate() {
@@ -38,7 +44,7 @@
 		console.log(result);
 		document.getElementById("result").innerHTML = result;
 	}
-	
+	console.log(window.location.pathname);
 	
 </script>
 </html>
