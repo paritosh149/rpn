@@ -2,6 +2,7 @@
 The idea is to build a basic RPN calculator
 
 ###Run it on console
+
 ```java -jar .\target\rpn-1.0-SNAPSHOT.jar```
 
 ###Run it on browser (via [CheerpJ](https://leaningtech.com/pages/cheerpj.html))
