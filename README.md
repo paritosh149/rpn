@@ -1,9 +1,14 @@
 ##Calculator - Reverse Polish Notation
 The idea is to build a basic RPN calculator
+
 ###Run it on console
 ```java -jar .\target\rpn-1.0-SNAPSHOT.jar```
 
-####NOTE: **This one requires JRE 11 or above**
+###Run it on browser (via [CheerpJ](https://leaningtech.com/pages/cheerpj.html))
+
+[https://paritosh149.github.io/rpn/](https://paritosh149.github.io/rpn/)
+
+####NOTE: **This one requires JRE 8 or above**
 
 ###TODO items
 - [x] Add Readme.md
