@@ -7,11 +7,14 @@
 </head>
 <body>
 <h2>RPN Calculator</h2><br />
-<h3>Available functions are +, - , *, /</h3>
+<h3>Available functions are +, - , * /</h3>
 <h3>Available commands are undo, clear</h3>
 <h3>Example: 12 3 + would result 15</h3>
-<h4>Enter: <input name="inputLine" /></h4><br />
-<button onClick="calculate()" >Calculate</button><br />
+<h4>Enter: <input id="inputLine" /></h4><br />
+<button id="calcBtn" onClick="calculate()" >Calculate</button>
+<button onClick="calculate('undo')">Undo</button>
+<button onClick="calculate('clear')">Clear</button>
+<br />
 <h4>Result: <strong id="result"></strong></h4>
 <h5>Console:</h5>
 <div name="console" id="console" ></div>
@@ -34,7 +37,9 @@
 	var calculator = cjNew("com.example.calculator.CalculatorImpl")
 	var result="";
 	function calculate() {
-		var inputLine = document.getElementsByName("inputLine")[0].value;
+		var inputLine = document.getElementById("inputLine").value;
+		if(arguments.length>0)
+			inputLine = arguments[0]
 		cjCall(calculator, "processInputLine", inputLine).then(showResult);
 	}
 	
@@ -45,6 +50,21 @@
 		document.getElementById("result").innerHTML = result;
 	}
 	console.log(window.location.pathname);
+	
+	
+	// Get the input field
+	var input = document.getElementById("inputLine");
+
+	// Execute a function when the user releases a key on the keyboard
+	input.addEventListener("keyup", function(event) {
+	  // Number 13 is the "Enter" key on the keyboard
+	  if (event.keyCode === 13) {
+		// Cancel the default action, if needed
+		event.preventDefault();
+		// Trigger the button element with a click
+		document.getElementById("calcBtn").click();
+	  }
+	});
 	
 </script>
 </html>
