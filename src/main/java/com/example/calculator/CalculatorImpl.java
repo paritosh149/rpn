@@ -34,6 +34,8 @@ public class CalculatorImpl implements ICalculator {
     final HashMap<String, OperatorType> OperatorsMap;
     final HashMap<String, CommandType> CommandsMap;
 
+    boolean isRunnerEnabled = false;
+
     public CalculatorImpl() {
         this(Constants.DISPLAY_SEPARATOR_CHAR,
                 Constants.INPUT_SEPARATOR_CHAR,
@@ -76,12 +78,13 @@ public class CalculatorImpl implements ICalculator {
     public void run(InputStream inputStream, OutputStream outputStream) throws IOException {
         final Scanner scanner = new Scanner(inputStream);
         final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+        this.isRunnerEnabled = true;
         boolean isRunning = true;
         // keep accepting input lines until exit command is issued
         while (isRunning && scanner.hasNextLine()) {
             try {
                 // accept user inputs in a single line
-                String inputLine = scanner.nextLine().toLowerCase().trim();
+                String inputLine = scanner.nextLine();
                 try {
                     this.processInputLine(inputLine);
                 }catch (CalcException e) {
@@ -94,27 +97,35 @@ public class CalculatorImpl implements ICalculator {
             } catch (ExitException e) {
                 // stop accepting the input line
                 isRunning = false;
+                this.isRunnerEnabled = false;
             }
         }
     }
 
-    private void processInputLine(String inputLine) throws ExitException {
-        String[] inputParts = inputLine.split(inputSeparatorChar);
-        final int separatorLength = inputSeparatorChar.length();
-        int position = 1; // maintain position to help form InsufficientResourcesException message
-        for (String inputPart : inputParts) {
-            try {
-                // process each part in input line
-                this.processInputPart(inputPart);
-                // move the position marker ahead of current inputPart
-                position += inputPart.length() + separatorLength;
-            } catch (InsufficientResourcesException e) {
-                throw new CalcException("operator " + e.getMessage() + " (position: " + position + "): insufficient parameters ");
-            } catch (InvalidInputException e) {
-                throw new CalcException("Invalid input found: " + e.getMessage() + " ");
-            } catch (ArithmeticException e) {
-                throw new CalcException("Invalid operation attempted: " + e.getMessage() + " ");
+    public String processInputLine(String inputLine) throws ExitException {
+        try {
+            String[] inputParts = inputLine.toLowerCase().trim().split(inputSeparatorChar);
+            final int separatorLength = inputSeparatorChar.length();
+            int position = 1; // maintain position to help form InsufficientResourcesException message
+            for (String inputPart : inputParts) {
+                try {
+                    // process each part in input line
+                    this.processInputPart(inputPart);
+                    // move the position marker ahead of current inputPart
+                    position += inputPart.length() + separatorLength;
+                } catch (InsufficientResourcesException e) {
+                    throw new CalcException("operator " + e.getMessage() + " (position: " + position + "): insufficient parameters ");
+                } catch (InvalidInputException e) {
+                    throw new CalcException("Invalid input found: " + e.getMessage() + " ");
+                } catch (ArithmeticException e) {
+                    throw new CalcException("Invalid operation attempted: " + e.getMessage() + " ");
+                }
             }
+            return this.toString();
+        }catch(CalcException e) {
+            if(this.isRunnerEnabled)
+                throw e;
+            else return e.getMessage();
         }
     }
 

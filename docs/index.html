@@ -6,10 +6,39 @@
     <script src="https://cjrtnc.leaningtech.com/2.1/loader.js"></script>
 </head>
 <body>
+<h2>RPN Calculator</h2><br />
+<h4>Enter: <input name="inputLine" /></h4><br />
+<button onClick="calculate()" >Calculate</button><br />
+<h4>Result: </h4><h5 id="result"></h5>
+
 </body>
 <script>
-    cheerpjInit();
-    cheerpjCreateDisplay(800,600);
-    cheerpjRunMain("com.example.calculator.MainWasm","/rpn/app/rpn-1.0-SNAPSHOT.jar");
+	/*function showPreloadProgress(loadedFiles, totalFiles)
+	{
+		console.log("Percentage loaded "+(loadedFiles*100/totalFiles));
+	}
+	var cheerpjListener = {preloadProgress:showPreloadProgress};
+	cheerpjInit({listener:cheerpjListener});
+	*/
+	cheerpjInit();
+    //cheerpjCreateDisplay(800,600);
+	// py "d:\cheerpj_2.1\cheerpjfy.py" "rpn-1.0-SNAPSHOT.jar"
+	// py -m http.server 8081
+    cheerpjRunMain("com.example.calculator.MainWasm","/app/rpn-1.0-SNAPSHOT.jar");
+	var calculator = cjNew("com.example.calculator.CalculatorImpl")
+	var result="";
+	function calculate() {
+		var inputLine = document.getElementsByName("inputLine")[0].value;
+		cjCall(calculator, "processInputLine", inputLine).then(showResult);
+	}
+	
+	function showResult(resultValue) {
+		result = new TextDecoder("utf-16le").decode(resultValue.value0); 
+		result = result.substring(1); 
+		console.log(result);
+		document.getElementById("result").innerHTML = result;
+	}
+	
+	
 </script>
 </html>

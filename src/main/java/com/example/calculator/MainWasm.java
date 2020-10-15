@@ -1,5 +1,6 @@
 package com.example.calculator;
 
+import com.example.calculator.exceptions.ExitException;
 import com.example.calculator.interfaces.ICalculator;
 
 import java.io.ByteArrayInputStream;
@@ -11,6 +12,16 @@ public class MainWasm {
         ICalculator calculator = new CalculatorImpl();
         System.out.println("Wasm Calculator ready...");
         // start the instance
-        calculator.run(new ByteArrayInputStream("5 6 +".getBytes()), System.out);
+//        calculator.run(new ByteArrayInputStream("5 6 +".getBytes()), System.out);
+        try {
+            for (String inputLine :
+                    args) {
+                String result = calculator.processInputLine(inputLine);
+                System.out.println(result);
+
+            }
+        } catch (ExitException e) {
+
+        }
     }
 }
