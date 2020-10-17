@@ -3,87 +3,103 @@
 <head>
     <meta charset="utf-8">
     <title>RPN on WebAssembly</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cjrtnc.leaningtech.com/2.1/loader.js"></script>
 </head>
 <style>
-.full-width {
-	text-align: center;
-	height: 100%;
-}
+    .full-width {
+        font-family: "Segoe UI",Arial,sans-serif;
+        background-color: lightseagreen;
+        text-align: center;
+        height: 100%;
+    }
 </style>
 <body class="full-width">
-<h2>RPN Calculator v2</h2><br />
-<h3>Available functions are +, - , * /</h3>
-<h3>Available commands are undo, clear</h3>
-<h3>Example: 12 3 + would result 15</h3>
-<h4>Enter: <input id="inputLine" /></h4><br />
-<button id="calcBtn" onClick="calculate()" >Calculate</button>
-<button id="undoBtn" onClick="calculate('undo')">Undo</button>
-<button id="clearBtn" onClick="calculate('clear')">Clear</button>
-<br />
-<h4>Result: <strong id="result"></strong></h4>
-<h5>Console:</h5>
-<div name="console" id="console" ></div>
+<h2>RPN Calculator v2</h2><br/>
+<div style="border: black 1px solid;">
+<h5>Available functions are +, - , * /</h5>
+<h5>Available commands are undo, clear</h5>
+<h5>Example: 12 3 + would result 15</h5>
+</div>
+<div id="loading">
+    <img width="200" src="https://www.wallies.com/filebin/images/loading_apple.gif" alt="Loading..."/>
+</div>
+<div id="main">
+    <div style="height: 10vw;"></div>
+
+    <h4>Press <bold style="color: crimson;">Enter</bold> to see result</h4>
+    <input id="inputLine" value="12 3 /"/><br/><br />
+
+    <button id="calcBtn" onClick="calculate()">Calculate</button>
+    <button id="undoBtn" onClick="calculate('undo')">Undo</button>
+    <button id="clearBtn" onClick="calculate('clear')">Clear</button>
+    <br/>
+    <h4>Result: <strong id="result"></strong></h4>
+</div>
+<!--<h5>Console:</h5>-->
+<!--<div id="console"></div>-->
 
 </body>
 <script>
-	/*function showPreloadProgress(loadedFiles, totalFiles)
-	{
-		console.log("Percentage loaded "+(loadedFiles*100/totalFiles));
-	}
-	var cheerpjListener = {preloadProgress:showPreloadProgress};
-	cheerpjInit({listener:cheerpjListener});
-	*/
-	cheerpjInit();
-    //cheerpjCreateDisplay(800,600);
-	// py "d:\cheerpj_2.1\cheerpjfy.py" "rpn-1.0-SNAPSHOT.jar"
-	// py -m http.server 8081
-	
-    cheerpjRunMain("com.example.calculator.MainWasm","/app/"+window.location.pathname+"rpn-1.0-SNAPSHOT.jar");
-	var calculator = cjNew("com.example.calculator.CalculatorImpl")
-	var result="";
-	function calculate() {
-		var inputLine = document.getElementById("inputLine").value;
-		if(arguments.length>0)
-			inputLine = arguments[0]
-		cjCall(calculator, "processInputLine", inputLine).then(showResult);
-		document.getElementById("result").innerHTML = "Calculating...";
-		document.getElementById("inputLine").disabled = true;
-		document.getElementById("calcBtn").disabled = true;
-		document.getElementById("undoBtn").disabled = true;
-		document.getElementById("clearBtn").disabled = true;
-	}
-	
-	function showResult(resultValue) {
-		result = new TextDecoder("utf-16le").decode(resultValue.value0); 
-		result = result.substring(1); 
-		console.log(result);
-		document.getElementById("result").innerHTML = result;
-		
-		document.getElementById("calcBtn").disabled = false;
-		document.getElementById("inputLine").disabled = false;
-		document.getElementById("undoBtn").disabled = false;
-		document.getElementById("clearBtn").disabled = false;
-		
-		document.getElementById("inputLine").value = "";
-	}
-	console.log(window.location.pathname);
-	
-	
-	// Get the input field
-	var input = document.getElementById("inputLine");
 
-	// Execute a function when the user releases a key on the keyboard
-	input.addEventListener("keyup", function(event) {
-	  // Number 13 is the "Enter" key on the keyboard
-	  if (event.keyCode === 13) {
-		// Cancel the default action, if needed
-		event.preventDefault();
-		// Trigger the button element with a click
-		calculate();
-	  }
-	});
-	
+    console.log(window.location.pathname);
+
+    // Get the input field
+    var input = document.getElementById("inputLine");
+
+    // Execute a function when the user releases a key on the keyboard
+    input.addEventListener("keyup", function (event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Trigger the button element with a click
+            calculate();
+        }
+    });
+
+    document.getElementById("main").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+
+    cheerpjInit();
+    cheerpjRunMain("com.example.calculator.MainWasm", "/app/" + window.location.pathname + "rpn-1.0-SNAPSHOT.jar");
+    var calculator = cjNew("com.example.calculator.CalculatorImpl");
+    calculator.then(() => {
+        console.log("CheerpJWorker is ready!!!!!!!!!!!!!");
+        document.getElementById("main").style.display = "block";
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("inputLine").focus();
+    })
+    var result = "";
+
+    function calculate() {
+        var inputLine = document.getElementById("inputLine").value.trim();
+        if(inputLine.length === 0)
+            return;
+        if (arguments.length > 0)
+            inputLine = arguments[0]
+        cjCall(calculator, "processInputLine", inputLine).then(showResult);
+        document.getElementById("result").innerHTML = "Calculating...";
+        document.getElementById("inputLine").disabled = true;
+        document.getElementById("calcBtn").disabled = true;
+        document.getElementById("undoBtn").disabled = true;
+        document.getElementById("clearBtn").disabled = true;
+    }
+
+    function showResult(resultValue) {
+        result = new TextDecoder("utf-16le").decode(resultValue.value0);
+        result = result.substring(1);
+        console.log(result);
+        document.getElementById("result").innerHTML = result;
+
+        document.getElementById("calcBtn").disabled = false;
+        document.getElementById("inputLine").disabled = false;
+        document.getElementById("undoBtn").disabled = false;
+        document.getElementById("clearBtn").disabled = false;
+
+        document.getElementById("inputLine").value = "";
+        document.getElementById("inputLine").focus();
+    }
+
 </script>
 </html>
