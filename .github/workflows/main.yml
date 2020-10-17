@@ -72,4 +72,4 @@ jobs:
         run: ls -l
         
       - name: Create / Update Jar.js
-        run: py ./cheerpj/cheerpj_2.1/cheerpjfy.py ./docs/rpn-1.0-SNAPSHOT.jar
+        run: python ./cheerpj/cheerpj_2.1/cheerpjfy.py ./docs/rpn-1.0-SNAPSHOT.jar
