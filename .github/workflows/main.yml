@@ -54,18 +54,22 @@ jobs:
           token: ${{ github.token }}
 
       - name: Download CheerpJ
-        run: curl -sL https://d3415aa6bfa4.leaningtech.com/cheerpj_linux_2.1.tar.gz --output cheerpj_linux_2.1.tar.gz
+        run: curl -sL https://d3415aa6bfa4.leaningtech.com/cheerpj_linux_2.1.tar.gz --output ./cheerpj_linux_2.1.tar.gz
       
+      # Create Directory for CheerpJ
+      - name: Run a one-line script
+        run: mkdir ./cheerpj
+
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: ls -l
         
       - name: Extract CheerpJ
-        run: tar -xf cheerpj_linux_2.1.tar.gz -C cheerpj --strip-components=1
+        run: tar -xf cheerpj_linux_2.1.tar.gz -C ./cheerpj
         
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: ls -l
-          
+        
       - name: Create / Update Jar.js
-        run: py "./cheerpj_2.1/cheerpjfy.py" "rpn-1.0-SNAPSHOT.jar"
+        run: py ./cheerpj/cheerpj_2.1/cheerpjfy.py ./docs/rpn-1.0-SNAPSHOT.jar
