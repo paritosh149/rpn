@@ -53,6 +53,19 @@ jobs:
           # Used to pull python distributions from actions/python-versions. Since there's a default, this is typically not supplied by the user.
           token: ${{ github.token }}
 
+      - name: Download CheerpJ
+        run: curl -sL https://d3415aa6bfa4.leaningtech.com/cheerpj_linux_2.1.tar.gz --output cheerpj_linux_2.1.tar.gz
+      
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: ls -l
+        
+      - name: Extract CheerpJ
+        run: tar -xf cheerpj_linux_2.1.tar.gz -C cheerpj --strip-components=1
+        
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: ls -l
           
       - name: Create / Update Jar.js
         run: py "./cheerpj_2.1/cheerpjfy.py" "rpn-1.0-SNAPSHOT.jar"
