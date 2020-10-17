@@ -18,9 +18,9 @@
 <h3>Available commands are undo, clear</h3>
 <h3>Example: 12 3 + would result 15</h3>
 <h4>Enter: <input id="inputLine" /></h4><br />
-<button id="calcBtn" onClick="calculate()" >Calculate</button>
-<button onClick="calculate('undo')">Undo</button>
-<button onClick="calculate('clear')">Clear</button>
+<!-- <button id="calcBtn" onClick="calculate()" >Calculate</button> -->
+<button id="undoBtn" onClick="calculate('undo')">Undo</button>
+<button id="clearBtn" onClick="calculate('clear')">Clear</button>
 <br />
 <h4>Result: <strong id="result"></strong></h4>
 <h5>Console:</h5>
@@ -48,6 +48,10 @@
 		if(arguments.length>0)
 			inputLine = arguments[0]
 		cjCall(calculator, "processInputLine", inputLine).then(showResult);
+		document.getElementById("result").innerHTML = "Calculating...";
+		document.getElementById("inputLine").disabled = true;
+		document.getElementById("undoBtn").disabled = true;
+		document.getElementById("clearBtn").disabled = true;
 	}
 	
 	function showResult(resultValue) {
@@ -55,6 +59,9 @@
 		result = result.substring(1); 
 		console.log(result);
 		document.getElementById("result").innerHTML = result;
+		document.getElementById("inputLine").disabled = false;
+		document.getElementById("undoBtn").disabled = false;
+		document.getElementById("clearBtn").disabled = false;
 	}
 	console.log(window.location.pathname);
 	
