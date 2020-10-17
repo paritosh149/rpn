@@ -73,3 +73,14 @@ jobs:
         
       - name: Create / Update Jar.js
         run: python ./cheerpj/cheerpj_2.1/cheerpjfy.py ./docs/rpn-1.0-SNAPSHOT.jar
+
+      - name: push
+        uses: github-actions-x/commit@v2.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push-branch: 'master'
+          commit-message: 'publish'
+          force-add: 'true'
+          files: ./docs/*
+          name: Github Action
+          email: rpn.action@github.com 
