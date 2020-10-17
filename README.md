@@ -3,13 +3,12 @@ The idea is to build a basic RPN calculator
 
 ### Run it on console
 
+#### NOTE: **JRE 8 or above is required**
 ```java -jar .\target\rpn-1.0-SNAPSHOT.jar```
 
 ### Run it on browser (via [CheerpJ](https://leaningtech.com/pages/cheerpj.html))
 
 [https://paritosh149.github.io/rpn/](https://paritosh149.github.io/rpn/)
-
-#### NOTE: **This one requires JRE 8 or above**
 
 ### TODO items
 - [x] Add Readme.md
@@ -31,5 +30,5 @@ The idea is to build a basic RPN calculator
 - [ ] Consider sharing behaviour instead of state
 - [ ] Consider dev mode vs prod mode
 - [ ] Create Docker image
-
+- [x] Added Github action to update demo site on every push to master
 
