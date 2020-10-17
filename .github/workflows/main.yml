@@ -34,6 +34,15 @@ jobs:
       - name: Build project with Maven
         run: mvn -B package --file pom.xml
       
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: ls -l
+         
+      # Copy JAR
+      - name: Copy Jar to docs
+        run: cp "./target/rpn-1.0-SNAPSHOT.jar" "./docs/"
+
+
       - name: Setup Python
         uses: actions/setup-python@v2.1.4
         with:
@@ -43,16 +52,7 @@ jobs:
           architecture: x64
           # Used to pull python distributions from actions/python-versions. Since there's a default, this is typically not supplied by the user.
           token: ${{ github.token }}
-      # Runs a set of commands using the runners shell
-      - name: Run maven script
-        uses: xlui/action-maven-cli/jdk11@master
-        id: package
-        with:
-          lifecycle: 'clean package'
-          
-      # Copy JAR
-      - name: Copy Jar to docs
-        run: cp "./target/rpn-1.0-SNAPSHOT.jar" "./docs/"
+
           
       - name: Create / Update Jar.js
         run: py "./cheerpj_2.1/cheerpjfy.py" "rpn-1.0-SNAPSHOT.jar"
