@@ -4,12 +4,13 @@
     <meta charset="utf-8">
     <title>RPN on WebAssembly</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
     <script src="https://cjrtnc.leaningtech.com/2.1/loader.js"></script>
 </head>
 <style>
     .full-width {
         font-family: "Segoe UI",Arial,sans-serif;
-        background-color: lightseagreen;
+        background-color: deepskyblue;
         text-align: center;
         height: 100%;
     }
@@ -74,10 +75,11 @@
 
     function calculate() {
         var inputLine = document.getElementById("inputLine").value.trim();
+        if (arguments.length > 0) {
+            inputLine = arguments[0]
+        }
         if(inputLine.length === 0)
             return;
-        if (arguments.length > 0)
-            inputLine = arguments[0]
         cjCall(calculator, "processInputLine", inputLine).then(showResult);
         document.getElementById("result").innerHTML = "Calculating...";
         document.getElementById("inputLine").disabled = true;
