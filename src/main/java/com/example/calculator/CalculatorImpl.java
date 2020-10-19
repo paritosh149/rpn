@@ -87,7 +87,7 @@ public class CalculatorImpl implements ICalculator {
                 String inputLine = scanner.nextLine();
                 try {
                     this.processInputLine(inputLine);
-                }catch (CalcException e) {
+                } catch (CalcException e) {
                     writer.write(e.getMessage());
                 } finally {
                     // print the calc stack

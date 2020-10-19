@@ -6,7 +6,11 @@ import java.math.MathContext;
 public class SimpleOperation {
 
     public static BigDecimal sqrt(BigDecimal a, MathContext mathContext) {
-        return a.sqrt(mathContext);
+        try {
+            return a.sqrt(mathContext);
+        } catch(NoSuchMethodError e) {
+            return new BigDecimal(Math.sqrt(a.doubleValue()));
+        }
     }
 
     public static BigDecimal add(BigDecimal a, BigDecimal b, MathContext mathContext) {

@@ -33,7 +33,10 @@ public class Operation {
         }
     }
 
-    private static void operateOnTwo(ManagedInput managedInput, Stack<TreeNode<BigDecimal>> calcHeap, MathContext mathContext, OperationOnTwo operationOnTwo) throws InsufficientResourcesException {
+    private static void operateOnTwo(ManagedInput managedInput,
+                                     Stack<TreeNode<BigDecimal>> calcHeap,
+                                     MathContext mathContext,
+                                     OperationOnTwo operationOnTwo) throws InsufficientResourcesException {
         TreeNode<BigDecimal> lastOperand = null;
         TreeNode<BigDecimal> secondLastOperand = null;
         try {

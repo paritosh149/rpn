@@ -63,7 +63,14 @@
     document.getElementById("loading").style.display = "block";
 
     cheerpjInit();
-    cheerpjRunMain("com.example.calculator.MainWasm", "/app/" + window.location.pathname + "rpn-1.0-SNAPSHOT.jar");
+
+    function getPathname() {
+        var path = window.location.pathname.replace("index.html","");
+        console.log("New Path: ", path);
+        return path;
+    }
+
+    cheerpjRunMain("com.example.calculator.MainWasm", "/app/" + getPathname() + "/rpn-1.0-SNAPSHOT.jar");
     var calculator = cjNew("com.example.calculator.CalculatorImpl");
     calculator.then(() => {
         console.log("CheerpJWorker is ready!!!!!!!!!!!!!");
